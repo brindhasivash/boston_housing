@@ -12200,7 +12200,7 @@ As PTRATIO increases, MEDV decreases. A high PTRATIO means there are more studen
 <p><strong>Answer: </strong></p>
 <p>A model is generally built to estimate future values. It learns the past data and based on that it predicts future data. We need a mechanism to figure out how trustworthy this model is going to be, whether it will predict almost the actual outcome or it will predict some irrelevant value as outcome. For that, we need to test this model.</p>
 <p>Training the model on the entire available data, and testing it on the same data would be of no use, because it has just seen those lables and it would give the exact outcomes. On new data the performance would be unpredictable. So we need the training and testing sets to be separate. As the testing data in real time will not be available until future, we somehow need to silmulate it.</p>
-<p>So we are holding a part of the available data, and treat it as if it were future data. This part of the dataset(assumed to be future data) which is being kept on hold during training is called testing set. As we already know the outcomes of this data which is kept on hold, we can compare the actual outcomes with the predictions made by the learning model and calculate the error. This will be helpful for us to fine tune the learning model, so that in real time it will make the beat possible prediction.</p>
+<p>So we are holding a part of the available data, and treat it as if it were future data. This part of the dataset(assumed to be future data) which is being kept on hold during training is called testing set. As we already know the outcomes of this data which is kept on hold, we can compare the actual outcomes with the predictions made by the learning model and calculate the error. Thus, it is used for performance evaluation on unseen data.</p>
 <p>Also we need to be cautious to avoid patterns in dataset by shuffling the dataset, then splitting it into training and testing set.</p>
 
 </div>
@@ -13286,8 +13286,8 @@ Think about the pros and cons of adding more training points based on if the tra
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
 <p>The top right graph:Maximum depth is 3.</p>
-<p>As more training points are added in initial phase, the score of the training curve decreases, but he score of the testing curve increases. But after the threshold point, there is no significant improvement in the testing score.</p>
-<p>Having more training points after the threshold(converging point of training and testing curves) has been reached <i>would not benefit</i> the model. After the threshold, the model starts to memorize the data, which would lead to overfitting of the model. This needs to be avoided. In summary, adding more points before reaching threshold (it makes underfitting model to good model) is good. Adding more points after reaching threshold(it makes good model to overfitting model) is not good.</p>
+<p>As more training points are added in initial phase, the score of the training curve decreases, but the score of the testing curve increases. But after the threshold point, there is no significant improvement in the testing score.</p>
+<p>The effort made in training the model by adding more data points would be worth only if there is an improvement in the score. As the testing score tends to remain almost the same after the thresold point, having more training points after the threshold point would not do any benefit.</p>
 
 </div>
 </div>
@@ -13837,10 +13837,12 @@ H9bEzZ8MvsvfAAAAAElFTkSuQmCC
 <h4 id="Application:">Application:<a class="anchor-link" href="#Application:">&#182;</a></h4><ul>
 <li><p>There are a few parameters that are to be supplied to GridsearchCV. We pass the regression as decision tree regression, parameters as max_depth in range 1 to 10, scoring function as r2_score. And there is one more parameter called cv sets, which is the cross validation set. Here we use ShuffleSplit to form cv sets.</p>
 </li>
-<li><p>ShuffleSplit functions this way: It creates n splits(in this case: 10). Then in each set a portion of it would be training, and the other portion will be testing set. We choose 80:20 of training:testing size (test_size=0.20).</p>
+<li><p>ShuffleSplit functions this way:</p>
 </li>
-<li><p>Below chart would explain how shuffle split forms cv sets.</p>
-<html>
+</ul>
+<p>It shuffles the entire dataset, splits 80% of data as training set and 20% as CV set(because the parameter test_size is set to 10). It shuffles again, splits 80% of data as training set and 20% as CV set. Like this, the shuffling happens for 10 iterations(because n_iter is set to 10) and totally there will be 10 pairs of training and cv sets generated.</p>
+<ul>
+<li>Below chart would explain how shuffle split forms cv sets.<html>
 <body>
 <img src="shuffle_split.jpg" width="800" height="600">
 </body>
@@ -13893,7 +13895,6 @@ H9bEzZ8MvsvfAAAAAElFTkSuQmCC
 </html><p>In case we want to use k-fold cross validation technique in this project, we need to substitute this for ShuffleSplit function. The cv sets generated by the KFold function need to be passed to the parameter 'cv' in GridsearchCV.</p>
 <h4 id="Benefits:">Benefits:<a class="anchor-link" href="#Benefits:">&#182;</a></h4><p>In traditional approach, we will be having fixed training, cross-validation and testing sets. In big data sets this will not be a problem. But in small datasets, after splitting like this, we will not be having enough data to train our model.</p>
 <p>So we go for k fold cross validation in which we don't have a fixed set for cross-validation. The data set will be split into training and testing sets. Then this training set will be used for both training and cross-validation. This approach does not waste too much of training data eventhough it is computationally expensive. As there is no fixed cross-validation set, we can avoid our result being skewed too.</p>
-<p>The difference between shuffle split and k fold is that, shuffle split generates fixed training-cv sets, whereas k fold generates varying training-cv sets.</p>
 <p><i>It can be used in grid search to supply values for the parameter 'cv'. If k fold cross validation is used in grid search, for each depth, we can get average of r2_score of all the training-cv set combinations. We would get 10 average scores like this, in which we choose the one with maximum score, as always. This would be really better than having score calculated for a fixed cv set.</i></p>
 
 </div>
